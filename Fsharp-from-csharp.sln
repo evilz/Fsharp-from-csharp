@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.4
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Fsharp.Lib", "Fsharp.Lib\Fsharp.Lib.fsproj", "{B842D6A8-3689-40A7-8B57-6AD7EC4D6799}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsharpApp", "CsharpApp\CsharpApp.csproj", "{AEF697D1-F413-4396-A63A-B1BAB628C4D9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B842D6A8-3689-40A7-8B57-6AD7EC4D6799}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B842D6A8-3689-40A7-8B57-6AD7EC4D6799}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B842D6A8-3689-40A7-8B57-6AD7EC4D6799}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B842D6A8-3689-40A7-8B57-6AD7EC4D6799}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEF697D1-F413-4396-A63A-B1BAB628C4D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEF697D1-F413-4396-A63A-B1BAB628C4D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEF697D1-F413-4396-A63A-B1BAB628C4D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEF697D1-F413-4396-A63A-B1BAB628C4D9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
