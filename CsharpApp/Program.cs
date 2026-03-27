@@ -134,5 +134,12 @@ Console.WriteLine($"  Validate Age=25  -> success={ok3}, value={value3}");
 var (ok4, _, error4) = PureFsharp.TryValidatePositive("Age", -1);
 Console.WriteLine($"  Validate Age=-1  -> success={ok4}, error={error4}");
 
-Console.WriteLine("\nDone! Press any key to exit...");
-Console.ReadKey();
+if (!Console.IsInputRedirected)
+{
+    Console.WriteLine("\nDone! Press any key to exit...");
+    Console.ReadKey();
+}
+else
+{
+    Console.WriteLine("\nDone!");
+}
