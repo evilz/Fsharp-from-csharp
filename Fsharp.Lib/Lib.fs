@@ -17,8 +17,8 @@ type Product(id: int, name: string, price: float) =
     /// Mutable product name.
     member val Name = name with get, set
 
-    /// Mutable price.
-    member val Price = price with get, set
+    /// Price with public getter and private setter (F# 10 access-modifier feature).
+    member val Price = price with public get, private set
 
     /// Secondary constructor that uses a default price.
     new(id, name) = Product(id, name, Product.DefaultPrice)
@@ -191,6 +191,27 @@ module PureFsharp =
             do! Task.Delay(100)
             return $"Hello, {name}!"
         }
+
+    /// Demonstrates F# 10 'and!' for concurrent task awaiting in task CEs.
+    let FetchBothAsync (nameA: string, nameB: string) : Task<string * string> =
+        task {
+            let! greetA = GreetAsync nameA
+            and! greetB = GreetAsync nameB
+            return (greetA, greetB)
+        }
+
+    // — ValueOption optional parameters (F# 10) —
+
+    /// Uses [<Struct>] on optional parameter for zero-allocation ValueOption.
+    let Greet (name: string) ([<System.Runtime.InteropServices.Optional; System.Runtime.InteropServices.DefaultParameterValue(null: string)>] greeting: string) =
+        let g = if isNull greeting then "Hello" else greeting
+        $"{g}, {name}!"
+
+    /// Demonstrates ValueOption for optional values without heap allocation.
+    let TryParseInt (input: string) : int voption =
+        match System.Int32.TryParse(input) with
+        | true, v -> ValueSome v
+        | _ -> ValueNone
 
     // — Result helpers for C# interop —
 

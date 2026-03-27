@@ -117,8 +117,23 @@ WriteTitle("Async / Task");
 var greeting = await PureFsharp.GreetAsync("World");
 Console.WriteLine($"  GreetAsync(\"World\") -> {greeting}");
 
+// F# 10: 'and!' in task CEs — concurrent awaiting
+var (greetA, greetB) = await PureFsharp.FetchBothAsync("Alice", "Bob");
+Console.WriteLine($"  FetchBothAsync(\"Alice\", \"Bob\") -> ({greetA}, {greetB})");
+
 // ──────────────────────────────────────────────
-// 11. RESULT / VALIDATION
+// 11. VALUEOPTION (F# 10)
+// ──────────────────────────────────────────────
+WriteTitle("ValueOption (F# 10)");
+
+var parsed = PureFsharp.TryParseInt("42");
+Console.WriteLine($"  TryParseInt(\"42\")    -> {(parsed.IsSome ? parsed.Item.ToString() : "None")}");
+
+var notParsed = PureFsharp.TryParseInt("abc");
+Console.WriteLine($"  TryParseInt(\"abc\")   -> {(notParsed.IsSome ? notParsed.Item.ToString() : "None")}");
+
+// ──────────────────────────────────────────────
+// 12. RESULT / VALIDATION
 // ──────────────────────────────────────────────
 WriteTitle("Result / Validation");
 

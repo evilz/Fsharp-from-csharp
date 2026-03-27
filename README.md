@@ -4,7 +4,7 @@ A practical guide showing how to **consume an F# library from a C# application**
 
 ## Prerequisites
 
-- [.NET 9 SDK](https://dotnet.microsoft.com/download) (or later)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download) (or later)
 
 ## Quick Start
 
@@ -24,10 +24,10 @@ dotnet run --project CsharpApp
 
 ```
 Fsharp-from-csharp.sln
-├── Fsharp.Lib/          # F# class library (net9.0)
+├── Fsharp.Lib/          # F# class library (net10.0)
 │   ├── Lib.fs           # All F# types and functions
 │   └── Fsharp.Lib.fsproj
-└── CsharpApp/           # C# console app (net9.0)
+└── CsharpApp/           # C# console app (net10.0)
     ├── Program.cs       # Demonstrates calling every F# feature
     └── CsharpApp.csproj
 ```
@@ -43,6 +43,7 @@ F# classes with primary constructors, mutable/immutable properties, methods, and
 | `type Product(id, name, price)` | `new Product(1, "Phone")` |
 | `member _.Id` (immutable) | `product.Id` |
 | `member val Name with get, set` (mutable) | `product.Name = "Tablet"` |
+| `member val Price with public get, private set` (F# 10) | `product.Price` (read-only from C#) |
 | `member this.IsExpensive` | `product.IsExpensive` |
 | `member _.CanBeSoldTo(code)` | `product.CanBeSoldTo("US")` |
 
@@ -132,16 +133,40 @@ var result = PureFsharp.SquareAndFilterEven(input); // [4, 16]
 var sum = PureFsharp.SumAll([10, 20, 30]);          // 60
 ```
 
-### 10. Async / Task
+### 10. Async / Task & `and!` (F# 10)
 
 F# `task { }` computation expressions return `Task<T>`, so they integrate with C# `async`/`await` with zero friction.
+
+F# 10 adds **`and!`** support in task CEs, enabling concurrent awaiting of multiple tasks:
+
+```fsharp
+let FetchBothAsync (nameA, nameB) =
+    task {
+        let! greetA = GreetAsync nameA
+        and! greetB = GreetAsync nameB   // runs concurrently with greetA
+        return (greetA, greetB)
+    }
+```
 
 ```csharp
 var greeting = await PureFsharp.GreetAsync("World");
 // "Hello, World!"
+
+var (a, b) = await PureFsharp.FetchBothAsync("Alice", "Bob");
+// ("Hello, Alice!", "Hello, Bob!")
 ```
 
-### 11. Result Type / Validation
+### 11. ValueOption (F# 10)
+
+`ValueOption<T>` is a struct-based alternative to `Option<T>` that avoids heap allocation. F# 10 promotes its use via `[<Struct>]` optional parameters.
+
+```csharp
+var parsed = PureFsharp.TryParseInt("42");       // ValueSome 42
+var failed = PureFsharp.TryParseInt("abc");       // ValueNone
+Console.WriteLine(parsed.IsSome ? parsed.Item.ToString() : "None");
+```
+
+### 12. Result Type / Validation
 
 F# `Result<'T, 'E>` doesn't map cleanly to C#, so the library exposes a **tuple-based wrapper** `(bool success, T value, string error)` for easy consumption.
 
@@ -150,11 +175,21 @@ var (ok, value, _)   = PureFsharp.TryValidateName("Alice"); // ok=true
 var (ok2, _, error)  = PureFsharp.TryValidateName("");       // ok=false, error="Name must not be empty"
 ```
 
+## F# 10 / .NET 10 Highlights Used Here
+
+| Feature | Where |
+|---|---|
+| **Access modifiers on auto-property accessors** | `Product.Price` — `public get, private set` |
+| **`and!` in task computation expressions** | `FetchBothAsync` — concurrent awaiting |
+| **`ValueOption<T>`** | `TryParseInt` — zero-allocation optional return |
+| **Parallel compilation** | `<ParallelCompilation>true</ParallelCompilation>` in fsproj |
+
 ## Tips for F# / C# Interop
 
 - **Records** give you free equality, comparison, and formatting — great for DTOs.
 - **Discriminated unions** are powerful but verbose to use from C# — consider wrapping complex cases.
 - **`Option<T>`** → use `FSharpOption<T>.Some/None`; or wrap with nullable helpers.
+- **`ValueOption<T>`** → prefer for performance-sensitive paths; access via `.IsSome` / `.Item`.
 - **`Result<T,E>`** → expose as tuples or custom result classes for idiomatic C#.
 - **`task { }`** in F# returns `Task<T>` directly — perfect for `await`.
 - **Extension methods** need `[<Extension>]` on both the type and the method.
